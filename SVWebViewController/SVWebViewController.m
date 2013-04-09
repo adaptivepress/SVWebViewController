@@ -7,6 +7,7 @@
 //  https://github.com/samvermette/SVWebViewController
 
 #import "SVWebViewController.h"
+#import "MBProgressHUD.h"
 
 @interface SVWebViewController () <UIWebViewDelegate, UIActionSheetDelegate, MFMailComposeViewControllerDelegate>
 
@@ -19,6 +20,8 @@
 
 @property (nonatomic, strong) UIWebView *mainWebView;
 @property (nonatomic, strong) NSURL *URL;
+
+@property (nonatomic) BOOL hasDoneInitialLoad;
 
 - (id)initWithAddress:(NSString*)urlString;
 - (id)initWithURL:(NSURL*)URL;
@@ -38,6 +41,8 @@
 @implementation SVWebViewController
 
 @synthesize availableActions;
+
+@synthesize hasDoneInitialLoad;
 
 @synthesize URL, mainWebView;
 @synthesize backBarButtonItem, forwardBarButtonItem, refreshBarButtonItem, stopBarButtonItem, actionBarButtonItem, pageActionSheet;
@@ -129,6 +134,7 @@
     if(self = [super init]) {
         self.URL = pageURL;
         self.availableActions = SVWebViewControllerAvailableActionsOpenInSafari | SVWebViewControllerAvailableActionsOpenInChrome | SVWebViewControllerAvailableActionsMailLink;
+        self.hasDoneInitialLoad = NO;
     }
     
     return self;
@@ -292,12 +298,24 @@
     [self updateToolbarItems];
 }
 
+- (BOOL)webView:(UIWebView *)webView shouldStartLoadWithRequest:(NSURLRequest *)request navigationType:(UIWebViewNavigationType)navigationType
+{
+    if (navigationType != UIWebViewNavigationTypeOther || !self.hasDoneInitialLoad) {
+        [MBProgressHUD showHUDAddedTo:self.view animated:YES];
+    }
+    
+    return YES;
+}
+
 
 - (void)webViewDidFinishLoad:(UIWebView *)webView {
 	[[UIApplication sharedApplication] setNetworkActivityIndicatorVisible:NO];
     
     self.navigationItem.title = [webView stringByEvaluatingJavaScriptFromString:@"document.title"];
     [self updateToolbarItems];
+    
+    [MBProgressHUD hideAllHUDsForView:self.view animated:YES];
+    self.hasDoneInitialLoad = YES;
 }
 
 - (void)webView:(UIWebView *)webView didFailLoadWithError:(NSError *)error {
