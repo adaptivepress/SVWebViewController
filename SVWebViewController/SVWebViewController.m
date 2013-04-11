@@ -7,7 +7,7 @@
 //  https://github.com/samvermette/SVWebViewController
 
 #import "SVWebViewController.h"
-#import "MBProgressHUD.h"
+#import "UIView+ActivityIndicator.h"
 
 @interface SVWebViewController () <UIWebViewDelegate, UIActionSheetDelegate, MFMailComposeViewControllerDelegate>
 
@@ -301,7 +301,7 @@
 - (BOOL)webView:(UIWebView *)webView shouldStartLoadWithRequest:(NSURLRequest *)request navigationType:(UIWebViewNavigationType)navigationType
 {
     if (navigationType != UIWebViewNavigationTypeOther || !self.hasDoneInitialLoad) {
-        [MBProgressHUD showHUDAddedTo:self.view animated:YES];
+        [self.view startActivityIndicator];
     }
     
     return YES;
@@ -314,7 +314,7 @@
     self.navigationItem.title = [webView stringByEvaluatingJavaScriptFromString:@"document.title"];
     [self updateToolbarItems];
     
-    [MBProgressHUD hideAllHUDsForView:self.view animated:YES];
+    [self.view stopActivityIndicator];
     self.hasDoneInitialLoad = YES;
 }
 
