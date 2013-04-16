@@ -348,8 +348,11 @@
 
 - (void)actionButtonClicked:(id)sender {
     
-    if(pageActionSheet)
+    if(pageActionSheet){
+        [self.pageActionSheet dismissWithClickedButtonIndex:pageActionSheet.cancelButtonIndex animated:YES];
+        pageActionSheet = nil;
         return;
+    }
 	
     if(UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad)
         [self.pageActionSheet showFromBarButtonItem:self.actionBarButtonItem animated:YES];
