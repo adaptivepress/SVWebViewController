@@ -325,6 +325,7 @@
 - (void)webView:(UIWebView *)webView didFailLoadWithError:(NSError *)error {
 	[[UIApplication sharedApplication] setNetworkActivityIndicatorVisible:NO];
     [self updateToolbarItemsWithIsLoadingState:NO];
+    [self.view stopActivityIndicator];
 }
 
 #pragma mark - Target actions
@@ -338,12 +339,17 @@
 }
 
 - (void)reloadClicked:(UIBarButtonItem *)sender {
+    if ([mainWebView.request.URL.absoluteString isEqualToString:@""] && self.URL) {
+        [self loadURL:self.URL];
+        return;
+    }
     [mainWebView reload];
 }
 
 - (void)stopClicked:(UIBarButtonItem *)sender {
     [mainWebView stopLoading];
 	[self updateToolbarItemsWithIsLoadingState:NO];
+    [self.view stopActivityIndicator];
 }
 
 - (void)actionButtonClicked:(id)sender {
