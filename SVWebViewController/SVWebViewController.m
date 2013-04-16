@@ -27,7 +27,7 @@
 - (id)initWithURL:(NSURL*)URL;
 - (void)loadURL:(NSURL*)URL;
 
-- (void)updateToolbarItems;
+- (void)updateToolbarItemsWithIsLoadingState:(BOOL)isLoading;
 
 - (void)goBackClicked:(UIBarButtonItem *)sender;
 - (void)goForwardClicked:(UIBarButtonItem *)sender;
@@ -156,7 +156,7 @@
 
 - (void)viewDidLoad {
 	[super viewDidLoad];
-    [self updateToolbarItems];
+    [self updateToolbarItemsWithIsLoadingState:NO];
 }
 
 - (void)viewDidUnload {
@@ -210,12 +210,12 @@
 
 #pragma mark - Toolbar
 
-- (void)updateToolbarItems {
+- (void)updateToolbarItemsWithIsLoadingState:(BOOL)isLoading {
     self.backBarButtonItem.enabled = self.mainWebView.canGoBack;
     self.forwardBarButtonItem.enabled = self.mainWebView.canGoForward;
-    self.actionBarButtonItem.enabled = !self.mainWebView.isLoading;
+    self.actionBarButtonItem.enabled = !isLoading;
     
-    UIBarButtonItem *refreshStopBarButtonItem = self.mainWebView.isLoading ? self.stopBarButtonItem : self.refreshBarButtonItem;
+    UIBarButtonItem *refreshStopBarButtonItem = isLoading ? self.stopBarButtonItem : self.refreshBarButtonItem;
     
     UIBarButtonItem *fixedSpace = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFixedSpace target:nil action:nil];
     fixedSpace.width = 5.0f;
@@ -295,13 +295,17 @@
 
 - (void)webViewDidStartLoad:(UIWebView *)webView {
 	[[UIApplication sharedApplication] setNetworkActivityIndicatorVisible:YES];
-    [self updateToolbarItems];
 }
 
 - (BOOL)webView:(UIWebView *)webView shouldStartLoadWithRequest:(NSURLRequest *)request navigationType:(UIWebViewNavigationType)navigationType
 {
     if (navigationType != UIWebViewNavigationTypeOther || !self.hasDoneInitialLoad) {
+        // We need a healthy compromise between usability and error-proofness
+        // We actually wouldn't want to update the UI only during ajax calls and calls for resources, but
+        // UIWebViewNavigationTypeOther is fired also when e.g. window.location
+        // is changed in javascript.
         [self.view startActivityIndicator];
+        [self updateToolbarItemsWithIsLoadingState:YES];
     }
     
     return YES;
@@ -312,7 +316,7 @@
 	[[UIApplication sharedApplication] setNetworkActivityIndicatorVisible:NO];
     
     self.navigationItem.title = [webView stringByEvaluatingJavaScriptFromString:@"document.title"];
-    [self updateToolbarItems];
+    [self updateToolbarItemsWithIsLoadingState:NO];
     
     [self.view stopActivityIndicator];
     self.hasDoneInitialLoad = YES;
@@ -320,7 +324,7 @@
 
 - (void)webView:(UIWebView *)webView didFailLoadWithError:(NSError *)error {
 	[[UIApplication sharedApplication] setNetworkActivityIndicatorVisible:NO];
-    [self updateToolbarItems];
+    [self updateToolbarItemsWithIsLoadingState:NO];
 }
 
 #pragma mark - Target actions
@@ -339,7 +343,7 @@
 
 - (void)stopClicked:(UIBarButtonItem *)sender {
     [mainWebView stopLoading];
-	[self updateToolbarItems];
+	[self updateToolbarItemsWithIsLoadingState:NO];
 }
 
 - (void)actionButtonClicked:(id)sender {
