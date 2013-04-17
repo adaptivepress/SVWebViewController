@@ -53,7 +53,6 @@ static char AVWebViewActvityIndicatorBackground;
                                                               backgroundEdgeLength)];
     
     backgroundView.alpha = 0.85;
-    backgroundView.layer.zPosition = 100;
     backgroundView.layer.cornerRadius = 10;
     backgroundView.layer.masksToBounds = YES;
     backgroundView.backgroundColor = [UIColor blackColor];
@@ -70,9 +69,7 @@ static char AVWebViewActvityIndicatorBackground;
                                          self.frame.size.height/2 - activityIndicatorFrame.size.height/2,
                                          activityIndicatorFrame.size.width,
                                          activityIndicatorFrame.size.height);
-    
-    activityIndicator.layer.zPosition = 101;
-    
+        
     objc_setAssociatedObject(self, &AVWebViewActvityIndicator,
                              activityIndicator,
                              OBJC_ASSOCIATION_ASSIGN);
