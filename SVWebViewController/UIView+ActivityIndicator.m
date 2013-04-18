@@ -47,8 +47,8 @@ static char AVWebViewActvityIndicatorBackground;
 
     int backgroundEdgeLength = 100;
     
-    UIView *backgroundView = [[UIView alloc] initWithFrame:CGRectMake(self.frame.size.width/2 - backgroundEdgeLength/2,
-                                                              self.frame.size.height/2 - backgroundEdgeLength/2,
+    UIView *backgroundView = [[UIView alloc] initWithFrame:CGRectMake((int) (self.frame.size.width/2 - backgroundEdgeLength/2),
+                                                              (int) (self.frame.size.height/2 - backgroundEdgeLength/2),
                                                               backgroundEdgeLength,
                                                               backgroundEdgeLength)];
     
