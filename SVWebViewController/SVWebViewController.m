@@ -213,7 +213,7 @@
 - (void)updateToolbarItemsWithIsLoadingState:(BOOL)isLoading {
     self.backBarButtonItem.enabled = self.mainWebView.canGoBack;
     self.forwardBarButtonItem.enabled = self.mainWebView.canGoForward;
-    self.actionBarButtonItem.enabled = !isLoading;
+    self.actionBarButtonItem.enabled = hasDoneInitialLoad ? !isLoading : YES;
     
     UIBarButtonItem *refreshStopBarButtonItem = isLoading ? self.stopBarButtonItem : self.refreshBarButtonItem;
     
