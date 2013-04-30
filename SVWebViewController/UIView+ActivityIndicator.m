@@ -65,8 +65,9 @@ static char AVWebViewActvityIndicatorBackground;
     
     UIActivityIndicatorView *activityIndicator = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
     CGRect activityIndicatorFrame = activityIndicator.frame;
-    activityIndicator.frame = CGRectMake(self.frame.size.width/2 - activityIndicatorFrame.size.width/2,
-                                         self.frame.size.height/2 - activityIndicatorFrame.size.height/2,
+    
+    activityIndicator.frame = CGRectMake((int) (self.frame.size.width/2 - activityIndicatorFrame.size.width/2),
+                                         (int) (self.frame.size.height/2 - activityIndicatorFrame.size.height/2),
                                          activityIndicatorFrame.size.width,
                                          activityIndicatorFrame.size.height);
         
